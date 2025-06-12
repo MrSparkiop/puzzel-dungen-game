@@ -1,15 +1,50 @@
+/* --- Twilight Theme --- */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
 body {
-    background-color: #333;
-    color: #fff;
-    font-family: Arial, sans-serif;
+    background: linear-gradient(to bottom, #483D8B, #1a2330);
+    background-attachment: fixed; 
+    
+    font-family: 'Roboto', sans-serif;
+    color: #EAEAEA; 
     text-align: center;
+    margin: 0;
+    padding: 2em;
+}
+
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    
+    color: #FFA726;
+    
+    text-shadow: 0 0 8px #FFA726, 0 0 2px #000;
+    
+    margin-bottom: 2em; 
 }
 
 canvas {
     background-color: #000;
-    border: 2px solid #fff;
+    
+   
+    border: 3px solid #8A2BE2;
+    
+   
+    box-shadow: 0 0 20px #8A2BE2;
+    
+  
+    border-radius: 5px;
 }
 
 #info {
-    margin-top: 20px;
+    margin-top: 2em;
+    font-size: 1.1em;
+    line-height: 1.5; 
+    
+    opacity: 0.8;
+}
+
+#info span {
+    color: #FFA726;
+    font-weight: bold;
 }
