@@ -1,47 +1,90 @@
 /* --- Twilight Theme --- */
 
+/* Import the font we will use */
 @import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
 
 body {
     background: linear-gradient(to bottom, #483D8B, #1a2330);
-    background-attachment: fixed; 
-    
+    background-attachment: fixed;
     font-family: 'Roboto', sans-serif;
-    color: #EAEAEA; 
-    text-align: center;
+    color: #EAEAEA;
     margin: 0;
     padding: 2em;
+    overflow: hidden; /* Hide scrollbars */
+
+    /* --- Centering Fix --- */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
+
+
+/* --- Main Menu Styles --- */
+#main-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(26, 35, 48, 0.8); /* Semi-transparent background */
+    padding: 2em 3em;
+    border-radius: 10px;
+    border: 2px solid #8A2BE2;
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
+    backdrop-filter: blur(5px); /* Cool blurry glass effect */
+}
+
+#main-menu h2 {
+    font-family: 'Press Start 2P', cursive;
+    color: #FFA726;
+    text-shadow: 0 0 8px #FFA726;
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    font-size: 2em;
+}
+
+#start-button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: 1.2em;
+    color: #1a2330;
+    background-color: #FFA726;
+    border: none;
+    padding: 15px 30px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+#start-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #FFA726;
+}
+/* --- End Main Menu Styles --- */
+
 
 h1 {
     font-family: 'Press Start 2P', cursive;
-    
     color: #FFA726;
-    
     text-shadow: 0 0 8px #FFA726, 0 0 2px #000;
-    
-    margin-bottom: 2em; 
+    margin-bottom: 2em;
 }
 
 canvas {
     background-color: #000;
-    
-   
     border: 3px solid #8A2BE2;
-    
-   
     box-shadow: 0 0 20px #8A2BE2;
-    
-  
     border-radius: 5px;
+    width: 640px;  
+    height: 640px; 
+    display: none; 
 }
 
 #info {
     margin-top: 2em;
     font-size: 1.1em;
-    line-height: 1.5; 
-    
+    line-height: 1.5;
     opacity: 0.8;
+    display: none; 
 }
 
 #info span {

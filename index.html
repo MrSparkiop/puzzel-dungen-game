@@ -10,13 +10,17 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div id="main-menu">
+        <h2>Puzzle Dungeon</h2>
+        <button id="start-button">Start Game</button>
+    </div>
     <h1>WebGL Puzzle Dungeon</h1>
-    <canvas id="gameCanvas" width="640" height="640"></canvas>
-    <div id="info">
+    <canvas id="gameCanvas"></canvas> <div id="info">
         <p>Coins Remaining: <span id="coins-remaining"></span></p>
         <p>Level: <span id="level"></span></p>
         <p>Use Arrow Keys to move. Collect all the coins to unlock the exit!</p>
     </div>
-    <script src="game.js"></script>
+
+    <script type="module" src="js/main.js"></script>
 </body>
 </html>
