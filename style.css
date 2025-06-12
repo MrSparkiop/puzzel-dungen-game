@@ -20,8 +20,8 @@ body {
 }
 
 
-/* --- Main Menu Styles --- */
-#main-menu {
+/* --- Menu & Screen Styles --- */
+#main-menu, #win-screen {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -29,12 +29,23 @@ body {
     background-color: rgba(26, 35, 48, 0.8); /* Semi-transparent background */
     padding: 2em 3em;
     border-radius: 10px;
-    border: 2px solid #8A2BE2;
-    box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
     backdrop-filter: blur(5px); /* Cool blurry glass effect */
+    display: none; /* Hidden by default */
+    text-align: center;
 }
 
-#main-menu h2 {
+#main-menu {
+    border: 2px solid #8A2BE2;
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
+}
+
+#win-screen {
+    border: 2px solid #FFA726; /* Gold border */
+    box-shadow: 0 0 25px rgba(255, 167, 38, 0.7);
+}
+
+
+#main-menu h2, #win-screen h2 {
     font-family: 'Press Start 2P', cursive;
     color: #FFA726;
     text-shadow: 0 0 8px #FFA726;
@@ -43,7 +54,8 @@ body {
     font-size: 2em;
 }
 
-#start-button {
+/* --- Shared Button Styles --- */
+#start-button, #play-again-button {
     font-family: 'Press Start 2P', cursive;
     font-size: 1.2em;
     color: #1a2330;
@@ -55,11 +67,11 @@ body {
     transition: all 0.2s ease-in-out;
 }
 
-#start-button:hover {
+#start-button:hover, #play-again-button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px #FFA726;
 }
-/* --- End Main Menu Styles --- */
+/* --- End Menu & Screen Styles --- */
 
 
 h1 {

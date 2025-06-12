@@ -11,21 +11,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainMenu = document.getElementById('main-menu');
     const startButton = document.getElementById('start-button');
     const gameCanvas = document.getElementById('gameCanvas');
+    const gameInfo = document.getElementById('info');
+    const coinsRemainingSpan = document.getElementById('coins-remaining');
+    const levelSpan = document.getElementById('level');
+    const winScreen = document.getElementById('win-screen');
+    const playAgainButton = document.getElementById('play-again-button');
 
-    // --- FIX START: Set Canvas Size ---
     // Set the canvas drawing buffer size based on the level layout and tile size.
     const mapWidthInTiles = levels[0][0].length;
     const mapHeightInTiles = levels[0].length;
     gameCanvas.width = mapWidthInTiles * tileSize;
     gameCanvas.height = mapHeightInTiles * tileSize;
-    // --- FIX END ---
-
-    const gameInfo = document.getElementById('info');
-    const coinsRemainingSpan = document.getElementById('coins-remaining');
-    const levelSpan = document.getElementById('level');
-
+    
     // Game state manager
-    let gameState = 'MENU'; // Can be 'MENU' or 'PLAYING'
+    let gameState = 'MENU'; // Can be 'MENU', 'PLAYING', or 'WIN'
 
     const gl = gameCanvas.getContext('webgl');
     if (!gl) {
@@ -79,7 +78,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const playerTexture = createAssetTexture(gl, 'blue');
     const wallTexture = createAssetTexture(gl, 'darkgrey');
-    const coinTexture = createCoinTexture(gl);
+    const coinTexture = createCoinTexture(gl); // This now loads your sprite!
     const exitTexture = createAssetTexture(gl, 'purple');
 
     function drawScene() {
@@ -117,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (tile === '#') { walls.push({ x, y }); }
                 else if (tile === 'P') { player.x = x; player.y = y; }
                 else if (tile === 'C') { coins.push({ x, y }); coinsToCollect++; }
-                else if (tile === 'E') { exit.x = x; exit.y = y; } // --- FIX: Read Exit from map
+                else if (tile === 'E') { exit.x = x; exit.y = y; }
             }
         }
         updateCoinCounter();
@@ -151,19 +150,25 @@ document.addEventListener('DOMContentLoaded', () => {
             if (currentLevel < levels.length) {
                 loadLevel(currentLevel);
             } else {
-                alert('You win!');
-                showMainMenu(); // Go back to menu after winning
+                showWinScreen(); // Show the win screen instead of an alert
             }
         }
 
-        // Only redraw the scene when the player makes a move
         requestAnimationFrame(drawScene);
     });
 
-    // Functions to control game state
+    // --- Functions to control game state ---
     function showMainMenu() {
         gameState = 'MENU';
         mainMenu.style.display = 'block';
+        gameCanvas.style.display = 'none';
+        gameInfo.style.display = 'none';
+        winScreen.style.display = 'none'; // Hide win screen
+    }
+
+    function showWinScreen() {
+        gameState = 'WIN';
+        winScreen.style.display = 'block';
         gameCanvas.style.display = 'none';
         gameInfo.style.display = 'none';
     }
@@ -171,18 +176,21 @@ document.addEventListener('DOMContentLoaded', () => {
     function startGame() {
         gameState = 'PLAYING';
         mainMenu.style.display = 'none';
+        winScreen.style.display = 'none'; // Hide win screen
         gameCanvas.style.display = 'block';
         gameInfo.style.display = 'block';
 
-        // Start the game by loading the first level and drawing the scene
-        currentLevel = 0; // Reset to level 1
+        currentLevel = 0;
         loadLevel(currentLevel);
         requestAnimationFrame(drawScene);
     }
 
-    // Event listener for the start button
+    // --- Event Listeners ---
     startButton.addEventListener('click', startGame);
+    playAgainButton.addEventListener('click', showMainMenu);
 
     // Initial action when the page loads
     showMainMenu();
+    // In style.css, #main-menu display is now none by default, so we show it here
+    mainMenu.style.display = 'block'; 
 });
