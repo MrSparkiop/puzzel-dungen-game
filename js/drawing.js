@@ -1,25 +1,8 @@
 import { mat4 } from './mat4.js';
 import { tileSize } from './config.js';
 
-export function createAssetTexture(gl, color) {
-    const textureCanvas = document.createElement('canvas');
-    const ctx = textureCanvas.getContext('2d');
-    textureCanvas.width = tileSize;
-    textureCanvas.height = tileSize;
-    ctx.fillStyle = color;
-    ctx.fillRect(0, 0, tileSize, tileSize);
-
-    const texture = gl.createTexture();
-    gl.bindTexture(gl.TEXTURE_2D, texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureCanvas);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-    return texture;
-}
-
-// This is the new function to load the coin sprite from an image file
-export function createCoinTexture(gl) {
+// Generic function to load any texture from a URL
+export function loadTexture(gl, url) {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
@@ -45,15 +28,33 @@ export function createCoinTexture(gl) {
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
-        // Use NEAREST filtering for a crisp, pixelated look, perfect for your sprite
+        // Use NEAREST filtering for a crisp, pixelated look
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     };
-    // Set the image source to the path of your coin sprite
-    image.src = 'assets/coin-sprite.png'; // <-- The only change is here
+    image.src = url;
 
     return texture;
 }
+
+// This function is now only for creating simple colored blocks (like walls)
+export function createAssetTexture(gl, color) {
+    const textureCanvas = document.createElement('canvas');
+    const ctx = textureCanvas.getContext('2d');
+    textureCanvas.width = tileSize;
+    textureCanvas.height = tileSize;
+    ctx.fillStyle = color;
+    ctx.fillRect(0, 0, tileSize, tileSize);
+
+    const texture = gl.createTexture();
+    gl.bindTexture(gl.TEXTURE_2D, texture);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, textureCanvas);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+    return texture;
+}
+
 
 export function drawObject(gl, programInfo, buffers, obj, texture) {
     const modelViewMatrix = mat4.create();

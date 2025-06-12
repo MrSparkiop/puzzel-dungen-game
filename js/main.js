@@ -4,7 +4,8 @@ alert("The LATEST main.js file is running!");
 import { levels, tileSize } from './config.js';
 import { mat4 } from './mat4.js';
 import { initShaderProgram, initBuffers } from './webgl_setup.js';
-import { createAssetTexture, createCoinTexture, drawObject } from './drawing.js';
+// Import our new generic texture loader
+import { createAssetTexture, loadTexture, drawObject } from './drawing.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     // Get references to all UI elements
@@ -76,9 +77,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buffers = initBuffers(gl);
 
-    const playerTexture = createAssetTexture(gl, 'blue');
+    // --- Load all textures using our new functions ---
+    const playerTexture = loadTexture(gl, 'assets/player-sprite.png');
+    const coinTexture = loadTexture(gl, 'assets/coin-sprite.png');
     const wallTexture = createAssetTexture(gl, 'darkgrey');
-    const coinTexture = createCoinTexture(gl); // This now loads your sprite!
     const exitTexture = createAssetTexture(gl, 'purple');
 
     function drawScene() {
