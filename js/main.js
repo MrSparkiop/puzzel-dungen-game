@@ -5,6 +5,7 @@ import { createAssetTexture, loadTexture, drawObject } from './drawing.js';
 import { generateLevel } from './level_generator.js';
 
 document.addEventListener('DOMContentLoaded', () => {
+    // Audio and UI elements...
     const backgroundMusic = new Audio('assets/ES_Shut the World Out - Rasure.mp3');
     backgroundMusic.loop = true;
     const mainMenu = document.getElementById('main-menu');
@@ -16,6 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const winScreen = document.getElementById('win-screen');
     const playAgainButton = document.getElementById('play-again-button');
     const volumeSlider = document.getElementById('volume-slider');
+    const gameWrapper = document.getElementById('game-wrapper'); // Get the new game wrapper
 
     volumeSlider.addEventListener('input', (e) => {
         backgroundMusic.volume = e.target.value;
@@ -114,10 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('keydown', (e) => {
         if (gameState !== 'PLAYING') return;
 
-        // Check if the key pressed is an arrow key
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
-            // --- THIS IS THE FIX ---
-            // Prevent the browser's default behavior for arrow keys (like controlling sliders)
             e.preventDefault();
 
             let newX = player.x; let newY = player.y;
@@ -149,11 +148,12 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // --- MODIFIED Functions to hide/show the game wrapper ---
+
     function showMainMenu() {
         gameState = 'MENU';
         mainMenu.style.display = 'block';
-        gameCanvas.style.display = 'none';
-        gameInfo.style.display = 'none';
+        gameWrapper.style.display = 'none'; // Hide the game content
         winScreen.style.display = 'none';
         backgroundMusic.pause();
         backgroundMusic.currentTime = 0;
@@ -162,8 +162,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function showWinScreen() {
         gameState = 'WIN';
         winScreen.style.display = 'block';
-        gameCanvas.style.display = 'none';
-        gameInfo.style.display = 'none';
+        gameWrapper.style.display = 'none'; // Hide the game content
         backgroundMusic.pause();
     }
 
@@ -171,21 +170,18 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState = 'PLAYING';
         mainMenu.style.display = 'none';
         winScreen.style.display = 'none';
+        gameWrapper.style.display = 'flex'; // Show the game content
         
         const playPromise = backgroundMusic.play();
 
         if (playPromise !== undefined) {
             playPromise.then(_ => {
                 console.log("Music started!");
-                gameCanvas.style.display = 'block';
-                gameInfo.style.display = 'block';
                 currentLevel = 0;
                 loadLevel(currentLevel);
                 requestAnimationFrame(drawScene);
             }).catch(error => {
                 console.error("Music playback failed:", error);
-                gameCanvas.style.display = 'block';
-                gameInfo.style.display = 'block';
                 currentLevel = 0;
                 loadLevel(currentLevel);
                 requestAnimationFrame(drawScene);
@@ -193,9 +189,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
+    // --- Event Listeners and Initial Call ---
+
     startButton.addEventListener('click', startGame);
     playAgainButton.addEventListener('click', showMainMenu);
 
     showMainMenu();
-    mainMenu.style.display = 'block'; 
-});
+})();

@@ -1,4 +1,3 @@
-// dungeon-puzzle/js/level_generator.js
 
 // This function generates a random maze using a Randomized Depth-First Search algorithm.
 export function generateLevel(width, height) {
@@ -23,7 +22,7 @@ export function generateLevel(width, height) {
         const [cx, cy] = stack[stack.length - 1];
         const neighbors = [];
 
-        // Check potential neighbors (2 cells away)
+        
         if (isValid(cx, cy - 2)) neighbors.push([cx, cy - 2, cx, cy - 1]); // Up
         if (isValid(cx, cy + 2)) neighbors.push([cx, cy + 2, cx, cy + 1]); // Down
         if (isValid(cx - 2, cy)) neighbors.push([cx - 2, cy, cx - 1, cy]); // Left

@@ -21,18 +21,19 @@
         <button id="play-again-button">Play Again</button>
     </div>
 
-    <h1>WebGL Puzzle Dungeon</h1>
-    <canvas id="gameCanvas"></canvas>
-    <div id="info">
-        <p>Coins Remaining: <span id="coins-remaining"></span></p>
-        <p>Level: <span id="level"></span></p>
-        <p>Use Arrow Keys to move. Collect all the coins to unlock the exit!</p>
-        
-        <div class="volume-control">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-icon"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
-    <input type="range" id="volume-slider" min="0" max="1" value="1" step="0.01">
-</div>
-    </div>
+    <main id="game-wrapper">
+        <h1>WebGL Puzzle Dungeon</h1>
+        <canvas id="gameCanvas"></canvas>
+        <div id="info">
+            <p>Coins Remaining: <span id="coins-remaining"></span></p>
+            <p>Level: <span id="level"></span></p>
+            <p>Use Arrow Keys to move. Collect all the coins to unlock the exit!</p>
+            <div class="volume-control">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-icon"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <input type="range" id="volume-slider" min="0" max="1" value="1" step="0.01">
+            </div>
+        </div>
+    </main>
 
     <script type="module" src="js/main.js"></script>
 </body>
