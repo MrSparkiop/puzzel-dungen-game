@@ -6,7 +6,7 @@ html, body {
     height: 100%;
     margin: 0;
     padding: 0;
-    overflow: hidden; /* Prevent scrolling on the body itself */
+    overflow: hidden;
 }
 
 body {
@@ -19,7 +19,6 @@ body {
     justify-content: center;
 }
 
-/* --- New Game Wrapper Layout --- */
 #game-wrapper {
     width: 100%;
     height: 100%;
@@ -33,7 +32,7 @@ body {
 }
 
 /* --- Menu & Screen Styles (Pop-ups) --- */
-#main-menu, #win-screen {
+#main-menu, #win-screen, #character-select-menu {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -45,10 +44,11 @@ body {
     text-align: center;
     width: 85%;
     max-width: 500px;
-    z-index: 10; /* Ensure menus are on top */
+    z-index: 10;
+    display: none; /* All menus hidden by default */
 }
 
-#main-menu {
+#main-menu, #character-select-menu {
     border: 2px solid #8A2BE2;
     box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
 }
@@ -58,7 +58,8 @@ body {
     box-shadow: 0 0 25px rgba(255, 167, 38, 0.7);
 }
 
-#main-menu h2, #win-screen h2 {
+
+#main-menu h2, #win-screen h2, #character-select-menu h2 {
     font-family: 'Press Start 2P', cursive;
     color: #FFA726;
     text-shadow: 0 0 8px #FFA726;
@@ -66,7 +67,6 @@ body {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
 }
 
-/* --- Shared Button Styles --- */
 #start-button, #play-again-button {
     font-family: 'Press Start 2P', cursive;
     font-size: clamp(0.9rem, 4vw, 1.2rem);
@@ -84,6 +84,33 @@ body {
     box-shadow: 0 0 15px #FFA726;
 }
 
+/* --- Character Selection Styles --- */
+.character-choices {
+    display: flex;
+    justify-content: center;
+    gap: 2em;
+}
+
+.character-option {
+    border: 3px solid transparent;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.character-option:hover {
+    border-color: #FFA726;
+    transform: scale(1.1);
+}
+
+.character-option img {
+    width: 80px;
+    height: 80px;
+    image-rendering: pixelated; /* Keeps pixel art crisp */
+}
+
+
 /* --- Game Content Styling --- */
 h1 {
     font-family: 'Press Start 2P', cursive;
@@ -91,8 +118,7 @@ h1 {
     text-shadow: 0 0 8px #FFA726, 0 0 2px #000;
     text-align: center;
     margin: 0;
-    flex-shrink: 0; /* Prevent title from shrinking */
-    /* Font size based on the smallest viewport dimension */
+    flex-shrink: 0;
     font-size: clamp(1rem, 3vmin, 2.2rem);
 }
 
@@ -101,13 +127,9 @@ canvas {
     border: 3px solid #8A2BE2;
     box-shadow: 0 0 20px #8A2BE2;
     border-radius: 5px;
-    
-    /* Let the flexbox container handle sizing */
     display: block;
     object-fit: contain;
     aspect-ratio: 1 / 1;
-
-    /* Size relative to the container, up to a max based on viewport */
     max-width: 95%; 
     max-height: 65%;
 }
@@ -117,17 +139,11 @@ canvas {
     line-height: 1.5;
     opacity: 0.8;
     text-align: center;
-    flex-shrink: 0; /* Prevent info from shrinking */
+    flex-shrink: 0;
 }
 
-#info p {
-    margin: 0.2em 0;
-}
-
-#info span {
-    color: #FFA726;
-    font-weight: bold;
-}
+#info p { margin: 0.2em 0; }
+#info span { color: #FFA726; font-weight: bold; }
 
 .volume-control {
     margin-top: 0.5em;
@@ -163,19 +179,4 @@ canvas {
     border: 2px solid #1a2330;
     box-shadow: 0 0 5px rgba(255, 167, 38, 0.5);
     margin-top: -5px;
-}
-
-#volume-slider::-moz-range-track {
-    background: #1a2330;
-    border-radius: 5px;
-    border: 1px solid #483D8B;
-}
-
-#volume-slider::-moz-range-thumb {
-    width: 18px;
-    height: 18px;
-    background: #FFA726;
-    border-radius: 50%;
-    border: 2px solid #1a2330;
-    box-shadow: 0 0 5px rgba(255, 167, 38, 0.5);
 }

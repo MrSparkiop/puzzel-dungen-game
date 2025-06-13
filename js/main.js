@@ -5,19 +5,25 @@ import { createAssetTexture, loadTexture, drawObject } from './drawing.js';
 import { generateLevel } from './level_generator.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // Audio and UI elements...
+    // --- Audio Setup ---
     const backgroundMusic = new Audio('assets/ES_Shut the World Out - Rasure.mp3');
     backgroundMusic.loop = true;
+
+    // --- UI Elements ---
     const mainMenu = document.getElementById('main-menu');
     const startButton = document.getElementById('start-button');
-    const gameCanvas = document.getElementById('gameCanvas');
-    const gameInfo = document.getElementById('info');
-    const coinsRemainingSpan = document.getElementById('coins-remaining');
-    const levelSpan = document.getElementById('level');
+    const characterSelectMenu = document.getElementById('character-select-menu');
+    const characterChoices = document.querySelector('.character-choices');
     const winScreen = document.getElementById('win-screen');
     const playAgainButton = document.getElementById('play-again-button');
+    const gameWrapper = document.getElementById('game-wrapper');
+    const gameCanvas = document.getElementById('gameCanvas');
+    const coinsRemainingSpan = document.getElementById('coins-remaining');
+    const levelSpan = document.getElementById('level');
     const volumeSlider = document.getElementById('volume-slider');
-    const gameWrapper = document.getElementById('game-wrapper'); // Get the new game wrapper
+
+    let selectedSpritePath = 'assets/player-sprite.png'; // Default character
+    let playerTexture; // Will be initialized in startGame
 
     volumeSlider.addEventListener('input', (e) => {
         backgroundMusic.volume = e.target.value;
@@ -52,22 +58,16 @@ document.addEventListener('DOMContentLoaded', () => {
     `;
 
     const shaderProgram = initShaderProgram(gl, vsSource, fsSource);
-    const programInfo = {
-        program: shaderProgram,
-        attribLocations: {
-            vertexPosition: gl.getAttribLocation(shaderProgram, 'aVertexPosition'),
-            textureCoord: gl.getAttribLocation(shaderProgram, 'aTextureCoord'),
-        },
-        uniformLocations: {
-            projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
-            modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
-            uSampler: gl.getUniformLocation(shaderProgram, 'uSampler'),
-        },
-    };
+    const programInfo = { program: shaderProgram, attribLocations: { /*...*/ }, uniformLocations: { /*...*/ } };
+    // ... (shader info setup is unchanged)
+    programInfo.attribLocations.vertexPosition = gl.getAttribLocation(shaderProgram, 'aVertexPosition');
+    programInfo.attribLocations.textureCoord = gl.getAttribLocation(shaderProgram, 'aTextureCoord');
+    programInfo.uniformLocations.projectionMatrix = gl.getUniformLocation(shaderProgram, 'uProjectionMatrix');
+    programInfo.uniformLocations.modelViewMatrix = gl.getUniformLocation(shaderProgram, 'uModelViewMatrix');
+    programInfo.uniformLocations.uSampler = gl.getUniformLocation(shaderProgram, 'uSampler');
 
     const buffers = initBuffers(gl);
 
-    const playerTexture = loadTexture(gl, 'assets/player-sprite.png');
     const coinTexture = loadTexture(gl, 'assets/coin-sprite.png');
     const wallTexture = createAssetTexture(gl, 'darkgrey');
     const exitTexture = createAssetTexture(gl, 'purple');
@@ -115,27 +115,22 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('keydown', (e) => {
         if (gameState !== 'PLAYING') return;
-
         if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
             e.preventDefault();
-
             let newX = player.x; let newY = player.y;
             if (e.key === 'ArrowUp') newY -= 1;
             if (e.key === 'ArrowDown') newY += 1;
             if (e.key === 'ArrowLeft') newX -= 1;
             if (e.key === 'ArrowRight') newX += 1;
-
             if (!walls.some(wall => wall.x === newX && wall.y === newY)) {
                 player.x = newX; player.y = newY;
             }
-
             const coinIndex = coins.findIndex(coin => coin.x === player.x && coin.y === player.y);
             if (coinIndex > -1) {
                 coins.splice(coinIndex, 1);
                 coinsToCollect--;
                 updateCoinCounter();
             }
-
             if (coinsToCollect === 0 && player.x === exit.x && player.y === exit.y) {
                 currentLevel++;
                 if (currentLevel < MAX_LEVELS) {
@@ -148,35 +143,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- MODIFIED Functions to hide/show the game wrapper ---
-
+    // --- Game State Flow ---
     function showMainMenu() {
         gameState = 'MENU';
         mainMenu.style.display = 'block';
-        gameWrapper.style.display = 'none'; // Hide the game content
+        characterSelectMenu.style.display = 'none';
+        gameWrapper.style.display = 'none';
         winScreen.style.display = 'none';
         backgroundMusic.pause();
         backgroundMusic.currentTime = 0;
     }
 
+    function showCharacterSelect() {
+        gameState = 'CHARACTER_SELECT';
+        mainMenu.style.display = 'none';
+        characterSelectMenu.style.display = 'block';
+    }
+
     function showWinScreen() {
         gameState = 'WIN';
         winScreen.style.display = 'block';
-        gameWrapper.style.display = 'none'; // Hide the game content
+        gameWrapper.style.display = 'none';
         backgroundMusic.pause();
     }
 
     function startGame() {
+        // Load the chosen character's texture
+        playerTexture = loadTexture(gl, selectedSpritePath);
+        
         gameState = 'PLAYING';
-        mainMenu.style.display = 'none';
-        winScreen.style.display = 'none';
-        gameWrapper.style.display = 'flex'; // Show the game content
+        characterSelectMenu.style.display = 'none';
+        gameWrapper.style.display = 'flex';
         
         const playPromise = backgroundMusic.play();
-
         if (playPromise !== undefined) {
             playPromise.then(_ => {
-                console.log("Music started!");
                 currentLevel = 0;
                 loadLevel(currentLevel);
                 requestAnimationFrame(drawScene);
@@ -189,10 +190,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // --- Event Listeners and Initial Call ---
-
-    startButton.addEventListener('click', startGame);
+    // --- Event Listeners ---
+    startButton.addEventListener('click', showCharacterSelect); // Changed
     playAgainButton.addEventListener('click', showMainMenu);
 
+    characterChoices.addEventListener('click', (e) => {
+        const choice = e.target.closest('.character-option');
+        if (choice) {
+            selectedSpritePath = choice.dataset.sprite;
+            startGame(); // Start the game after character is chosen
+        }
+    });
+
+    // --- Initial Call ---
     showMainMenu();
 })();
