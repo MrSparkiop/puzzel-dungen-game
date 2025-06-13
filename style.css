@@ -29,10 +29,11 @@ body {
     padding: 1em;
     box-sizing: border-box;
     gap: 1em;
+    transition: filter 0.3s ease-in-out; /* Smooth blur transition for pause */
 }
 
 /* --- Menu & Screen Styles (Pop-ups) --- */
-#main-menu, #win-screen, #character-select-menu {
+#main-menu, #win-screen, #character-select-menu, #pause-menu {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -45,10 +46,10 @@ body {
     width: 85%;
     max-width: 500px;
     z-index: 10;
-    display: none; /* All menus hidden by default */
+    display: none;
 }
 
-#main-menu, #character-select-menu {
+#main-menu, #character-select-menu, #pause-menu {
     border: 2px solid #8A2BE2;
     box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
 }
@@ -59,7 +60,7 @@ body {
 }
 
 
-#main-menu h2, #win-screen h2, #character-select-menu h2 {
+#main-menu h2, #win-screen h2, #character-select-menu h2, #pause-menu h2 {
     font-family: 'Press Start 2P', cursive;
     color: #FFA726;
     text-shadow: 0 0 8px #FFA726;
@@ -67,19 +68,21 @@ body {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
 }
 
-#start-button, #play-again-button {
+/* --- Shared Button Styles --- */
+#start-button, #play-again-button, #resume-button, #pause-to-main-menu-button {
     font-family: 'Press Start 2P', cursive;
-    font-size: clamp(0.9rem, 4vw, 1.2rem);
+    font-size: clamp(0.8rem, 3.5vw, 1.1rem); /* Slightly smaller font for more buttons */
     color: #1a2330;
     background-color: #FFA726;
     border: none;
-    padding: 15px 30px;
+    padding: 15px 25px;
     border-radius: 5px;
     cursor: pointer;
     transition: all 0.2s ease-in-out;
+    margin: 0.5em; /* Add space between buttons */
 }
 
-#start-button:hover, #play-again-button:hover {
+#start-button:hover, #play-again-button:hover, #resume-button:hover, #pause-to-main-menu-button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px #FFA726;
 }
@@ -107,9 +110,8 @@ body {
 .character-option img {
     width: 80px;
     height: 80px;
-    image-rendering: pixelated; /* Keeps pixel art crisp */
+    image-rendering: pixelated;
 }
-
 
 /* --- Game Content Styling --- */
 h1 {
