@@ -1,14 +1,12 @@
-import { levels, tileSize } from './config.js';
+import { tileSize } from './config.js';
 import { mat4 } from './mat4.js';
 import { initShaderProgram, initBuffers } from './webgl_setup.js';
 import { createAssetTexture, loadTexture, drawObject } from './drawing.js';
+import { generateLevel } from './level_generator.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Audio Setup ---
     const backgroundMusic = new Audio('assets/ES_Shut the World Out - Rasure.mp3');
     backgroundMusic.loop = true;
-
-    // --- UI Elements ---
     const mainMenu = document.getElementById('main-menu');
     const startButton = document.getElementById('start-button');
     const gameCanvas = document.getElementById('gameCanvas');
@@ -17,22 +15,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const levelSpan = document.getElementById('level');
     const winScreen = document.getElementById('win-screen');
     const playAgainButton = document.getElementById('play-again-button');
-    // Get the new volume slider element
     const volumeSlider = document.getElementById('volume-slider');
 
-    // --- Volume Control Event Listener ---
     volumeSlider.addEventListener('input', (e) => {
         backgroundMusic.volume = e.target.value;
     });
 
-
-    const mapWidthInTiles = levels[0][0].length;
-    const mapHeightInTiles = levels[0].length;
-    gameCanvas.width = mapWidthInTiles * tileSize;
-    gameCanvas.height = mapHeightInTiles * tileSize;
+    const LEVEL_WIDTH = 11;
+    const LEVEL_HEIGHT = 11;
+    gameCanvas.width = LEVEL_WIDTH * tileSize;
+    gameCanvas.height = LEVEL_HEIGHT * tileSize;
     
     let gameState = 'MENU';
-
     const gl = gameCanvas.getContext('webgl');
     if (!gl) { alert('WebGL not supported!'); return; }
 
@@ -77,6 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const exitTexture = createAssetTexture(gl, 'purple');
 
     let currentLevel = 0;
+    const MAX_LEVELS = 10;
     let player = { x: 1, y: 1 };
     let coins = [];
     let exit = { x: 0, y: 0 };
@@ -101,12 +96,12 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCoinCounter() { coinsRemainingSpan.textContent = coinsToCollect; }
 
     function loadLevel(levelIndex) {
-        const level = levels[levelIndex];
+        const levelLayout = generateLevel(LEVEL_WIDTH, LEVEL_HEIGHT);
         walls = []; coins = []; coinsToCollect = 0;
         levelSpan.textContent = levelIndex + 1;
-        for (let y = 0; y < level.length; y++) {
-            for (let x = 0; x < level[y].length; x++) {
-                const tile = level[y][x];
+        for (let y = 0; y < levelLayout.length; y++) {
+            for (let x = 0; x < levelLayout[y].length; x++) {
+                const tile = levelLayout[y][x];
                 if (tile === '#') { walls.push({ x, y }); }
                 else if (tile === 'P') { player.x = x; player.y = y; }
                 else if (tile === 'C') { coins.push({ x, y }); coinsToCollect++; }
@@ -118,29 +113,40 @@ document.addEventListener('DOMContentLoaded', () => {
     
     window.addEventListener('keydown', (e) => {
         if (gameState !== 'PLAYING') return;
-        let newX = player.x; let newY = player.y;
-        if (e.key === 'ArrowUp') newY -= 1;
-        if (e.key === 'ArrowDown') newY += 1;
-        if (e.key === 'ArrowLeft') newX -= 1;
-        if (e.key === 'ArrowRight') newX += 1;
 
-        if (!walls.some(wall => wall.x === newX && wall.y === newY)) {
-            player.x = newX; player.y = newY;
-        }
+        // Check if the key pressed is an arrow key
+        if (['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'].includes(e.key)) {
+            // --- THIS IS THE FIX ---
+            // Prevent the browser's default behavior for arrow keys (like controlling sliders)
+            e.preventDefault();
 
-        const coinIndex = coins.findIndex(coin => coin.x === player.x && coin.y === player.y);
-        if (coinIndex > -1) {
-            coins.splice(coinIndex, 1);
-            coinsToCollect--;
-            updateCoinCounter();
-        }
+            let newX = player.x; let newY = player.y;
+            if (e.key === 'ArrowUp') newY -= 1;
+            if (e.key === 'ArrowDown') newY += 1;
+            if (e.key === 'ArrowLeft') newX -= 1;
+            if (e.key === 'ArrowRight') newX += 1;
 
-        if (coinsToCollect === 0 && player.x === exit.x && player.y === exit.y) {
-            currentLevel++;
-            if (currentLevel < levels.length) { loadLevel(currentLevel); } 
-            else { showWinScreen(); }
+            if (!walls.some(wall => wall.x === newX && wall.y === newY)) {
+                player.x = newX; player.y = newY;
+            }
+
+            const coinIndex = coins.findIndex(coin => coin.x === player.x && coin.y === player.y);
+            if (coinIndex > -1) {
+                coins.splice(coinIndex, 1);
+                coinsToCollect--;
+                updateCoinCounter();
+            }
+
+            if (coinsToCollect === 0 && player.x === exit.x && player.y === exit.y) {
+                currentLevel++;
+                if (currentLevel < MAX_LEVELS) {
+                    loadLevel(currentLevel);
+                } else {
+                    showWinScreen();
+                }
+            }
+            requestAnimationFrame(drawScene);
         }
-        requestAnimationFrame(drawScene);
     });
 
     function showMainMenu() {
