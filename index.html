@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>WebGL Puzzle Dungeon</title>
-    
+    <link rel="icon" type="image/png" href="favicon.png">
     <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -25,9 +24,15 @@
                 <img src="assets/player-sprite-2.png" alt="New Character">
             </div>
         </div>
+        <div class="difficulty-selector">
+            <h3>Difficulty</h3>
+            <button class="difficulty-option" data-difficulty="easy">Easy</button>
+            <button class="difficulty-option" data-difficulty="medium">Medium</button>
+            <button class="difficulty-option" data-difficulty="hard">Hard</button>
+        </div>
+        <button id="play-button">Play</button>
     </div>
 
-    <!-- New Pause Menu -->
     <div id="pause-menu">
         <h2>Paused</h2>
         <button id="resume-button">Resume</button>
