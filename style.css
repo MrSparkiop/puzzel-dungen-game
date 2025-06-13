@@ -88,13 +88,12 @@ body {
 .character-choices {
     display: flex;
     justify-content: center;
-    gap: 2em;
+    gap: 1.5em;
     margin-bottom: 2em;
 }
 
-/* --- THIS IS THE FIX --- */
 .character-option {
-    border: 3px solid #483D8B; /* Darker, unselected purple border */
+    border: 3px solid #483D8B;
     border-radius: 8px;
     padding: 10px;
     cursor: pointer;
@@ -104,18 +103,30 @@ body {
 
 .character-option:hover {
     transform: scale(1.1);
-    border-color: #FFA726; /* Hover is yellow */
+    border-color: #FFA726;
 }
 
 .character-option.selected {
-    border-color: #8A2BE2; /* Selected is bright purple */
+    border-color: #8A2BE2;
     transform: scale(1.1);
-    box-shadow: 0 0 15px rgba(138, 43, 226, 0.7); /* Add purple glow */
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
 }
 
+/* --- NEW: Style for locked characters --- */
+.character-option.locked {
+    filter: grayscale(100%) brightness(0.5);
+    cursor: not-allowed;
+    border-color: #333;
+}
+.character-option.locked:hover {
+    transform: none; /* No hover effect on locked characters */
+    border-color: #333;
+}
+
+
 .character-option img {
-    width: 80px;
-    height: 80px;
+    width: 65px;
+    height: 65px;
     image-rendering: pixelated;
 }
 

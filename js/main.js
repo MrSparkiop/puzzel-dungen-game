@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainMenu = document.getElementById('main-menu');
     const startButton = document.getElementById('start-button');
     const characterSelectMenu = document.getElementById('character-select-menu');
-    const characterChoices = document.querySelector('.character-choices');
+    const characterChoiceElements = document.querySelectorAll('.character-option'); // Get all options
     const difficultySelector = document.querySelector('.difficulty-selector');
     const playButton = document.getElementById('play-button');
     const pauseMenu = document.getElementById('pause-menu');
@@ -26,6 +26,35 @@ document.addEventListener('DOMContentLoaded', () => {
     const coinsRemainingSpan = document.getElementById('coins-remaining');
     const levelSpan = document.getElementById('level');
     const volumeSlider = document.getElementById('volume-slider');
+
+    // --- Character Unlock Logic ---
+    const characters = {
+        'assets/player-sprite.png': { unlocked: true, unlocksOn: null },
+        'assets/player-sprite-3.png': { unlocked: false, unlocksOn: 'medium' }, // Orange character
+        'assets/player-sprite-2.png': { unlocked: false, unlocksOn: 'hard' } // Rainbow character
+    };
+
+    function saveUnlocks() {
+        const unlockedChars = {};
+        for (const sprite in characters) {
+            if (characters[sprite].unlocked) {
+                unlockedChars[sprite] = true;
+            }
+        }
+        localStorage.setItem('dungeonUnlocks', JSON.stringify(unlockedChars));
+    }
+
+    function loadUnlocks() {
+        const unlockedChars = JSON.parse(localStorage.getItem('dungeonUnlocks'));
+        if (unlockedChars) {
+            for (const sprite in unlockedChars) {
+                if (characters[sprite]) {
+                    characters[sprite].unlocked = true;
+                }
+            }
+        }
+    }
+
 
     // --- Game Settings ---
     let selectedSpritePath = 'assets/player-sprite.png';
@@ -170,6 +199,17 @@ document.addEventListener('DOMContentLoaded', () => {
     function showCharacterSelect() {
         gameState = 'CHARACTER_SELECT';
         mainMenu.style.display = 'none';
+        
+        // Update character visuals based on unlock status
+        characterChoiceElements.forEach(choiceEl => {
+            const spritePath = choiceEl.dataset.sprite;
+            if (characters[spritePath] && !characters[spritePath].unlocked) {
+                choiceEl.classList.add('locked');
+            } else {
+                choiceEl.classList.remove('locked');
+            }
+        });
+        
         characterSelectMenu.style.display = 'block';
         
         // Set default selections visually
@@ -196,6 +236,16 @@ document.addEventListener('DOMContentLoaded', () => {
         winScreen.style.display = 'block';
         gameWrapper.style.display = 'none';
         backgroundMusic.pause();
+
+        // --- UNLOCK LOGIC ---
+        // Check if the completed difficulty unlocks a character
+        const difficulty = selectedDifficulty.name;
+        for (const sprite in characters) {
+            if (characters[sprite].unlocksOn === difficulty) {
+                characters[sprite].unlocked = true;
+            }
+        }
+        saveUnlocks(); 
     }
 
     function startGame() {
@@ -208,20 +258,22 @@ document.addEventListener('DOMContentLoaded', () => {
         loadLevel(currentLevel);
     }
 
-    // --- Event Listeners ---
     startButton.addEventListener('click', showCharacterSelect);
-    playButton.addEventListener('click', startGame); // The new Play button starts the game
+    playButton.addEventListener('click', startGame);
     playAgainButton.addEventListener('click', showMainMenu);
     resumeButton.addEventListener('click', resumeGame);
     pauseToMainMenuButton.addEventListener('click', showMainMenu);
 
-    characterChoices.addEventListener('click', (e) => {
-        const choice = e.target.closest('.character-option');
-        if (choice) {
-            document.querySelectorAll('.character-option').forEach(el => el.classList.remove('selected'));
-            choice.classList.add('selected');
-            selectedSpritePath = choice.dataset.sprite;
-        }
+    characterChoiceElements.forEach(choice => {
+        choice.addEventListener('click', () => {
+            const spritePath = choice.dataset.sprite;
+            // Only allow selection if the character is unlocked
+            if (characters[spritePath] && characters[spritePath].unlocked) {
+                characterChoiceElements.forEach(el => el.classList.remove('selected'));
+                choice.classList.add('selected');
+                selectedSpritePath = spritePath;
+            }
+        });
     });
 
     difficultySelector.addEventListener('click', (e) => {
@@ -234,6 +286,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Initial Call ---
+    loadUnlocks(); // Load any saved progress when the game first loads
     showMainMenu();
     requestAnimationFrame(gameLoop);
 })();
