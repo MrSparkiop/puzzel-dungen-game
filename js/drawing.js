@@ -6,9 +6,6 @@ export function loadTexture(gl, url) {
     const texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, texture);
 
-    // Because loading an image is asynchronous, we'll put a single blue pixel
-    // in the texture so the game can start drawing immediately. When the image has
-    // finished downloading, we'll update the texture with the image's contents.
     const level = 0;
     const internalFormat = gl.RGBA;
     const width = 1;
@@ -23,12 +20,8 @@ export function loadTexture(gl, url) {
     image.onload = () => {
         gl.bindTexture(gl.TEXTURE_2D, texture);
         gl.texImage2D(gl.TEXTURE_2D, level, internalFormat, srcFormat, srcType, image);
-
-        // Use settings that work for any image size
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-
-        // Use NEAREST filtering for a crisp, pixelated look
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
         gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
     };
@@ -37,7 +30,7 @@ export function loadTexture(gl, url) {
     return texture;
 }
 
-// This function is now only for creating simple colored blocks (like walls)
+// This function is for creating simple colored blocks (like walls)
 export function createAssetTexture(gl, color) {
     const textureCanvas = document.createElement('canvas');
     const ctx = textureCanvas.getContext('2d');
@@ -55,7 +48,7 @@ export function createAssetTexture(gl, color) {
     return texture;
 }
 
-
+// Reverted to the simpler version before animation
 export function drawObject(gl, programInfo, buffers, obj, texture) {
     const modelViewMatrix = mat4.create();
     mat4.translate(modelViewMatrix, modelViewMatrix, [obj.x * tileSize + tileSize / 2, obj.y * tileSize + tileSize / 2, 0]);
