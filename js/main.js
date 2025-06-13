@@ -6,7 +6,7 @@ import { createAssetTexture, loadTexture, drawObject } from './drawing.js';
 document.addEventListener('DOMContentLoaded', () => {
     // --- Audio Setup ---
     const backgroundMusic = new Audio('assets/ES_Shut the World Out - Rasure.mp3');
-    backgroundMusic.loop = true; // Make the music loop continuously
+    backgroundMusic.loop = true;
 
     // --- UI Elements ---
     const mainMenu = document.getElementById('main-menu');
@@ -17,6 +17,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const levelSpan = document.getElementById('level');
     const winScreen = document.getElementById('win-screen');
     const playAgainButton = document.getElementById('play-again-button');
+    // Get the new volume slider element
+    const volumeSlider = document.getElementById('volume-slider');
+
+    // --- Volume Control Event Listener ---
+    volumeSlider.addEventListener('input', (e) => {
+        backgroundMusic.volume = e.target.value;
+    });
+
 
     const mapWidthInTiles = levels[0][0].length;
     const mapHeightInTiles = levels[0].length;
