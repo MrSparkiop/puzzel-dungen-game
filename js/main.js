@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const mainMenu = document.getElementById('main-menu');
     const startButton = document.getElementById('start-button');
     const characterSelectMenu = document.getElementById('character-select-menu');
-    const characterChoiceElements = document.querySelectorAll('.character-option'); // Get all options
+    const characterChoiceElements = document.querySelectorAll('.character-option');
     const difficultySelector = document.querySelector('.difficulty-selector');
     const playButton = document.getElementById('play-button');
     const pauseMenu = document.getElementById('pause-menu');
@@ -30,8 +30,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Character Unlock Logic ---
     const characters = {
         'assets/player-sprite.png': { unlocked: true, unlocksOn: null },
-        'assets/player-sprite-3.png': { unlocked: false, unlocksOn: 'medium' }, // Orange character
-        'assets/player-sprite-2.png': { unlocked: false, unlocksOn: 'hard' } // Rainbow character
+        'assets/player-sprite-3.png': { unlocked: false, unlocksOn: 'medium' },
+        'assets/player-sprite-2.png': { unlocked: false, unlocksOn: 'hard' }
     };
 
     function saveUnlocks() {
@@ -73,6 +73,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const gl = gameCanvas.getContext('webgl');
     if (!gl) { alert('WebGL not supported!'); return; }
 
+    // --- THIS IS THE FIX ---
+    // Enable transparency blending
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
+
+
     const vsSource = `
         attribute vec4 aVertexPosition;
         attribute vec2 aTextureCoord;
@@ -102,8 +108,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const buffers = initBuffers(gl);
     const coinTexture = loadTexture(gl, 'assets/coin-sprite.png');
-    const wallTexture = createAssetTexture(gl, 'darkgrey');
-    const doorTexture = loadTexture(gl, 'assets/door-sprite.png'); 
+    const wallTexture = loadTexture(gl, 'assets/wall-sprite.png');
+    const doorTexture = loadTexture(gl, 'assets/door-sprite.png');
+    const floorTexture = loadTexture(gl, 'assets/floor-sprite.png');
 
     let currentLevel = 0;
     const MAX_LEVELS = 10;
@@ -111,6 +118,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let coins = [];
     let exit = { x: 0, y: 0 };
     let walls = [];
+    let floorTiles = [];
     let coinsToCollect = 0;
 
     function drawScene() {
@@ -122,6 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
         gl.useProgram(programInfo.program);
         gl.uniformMatrix4fv(programInfo.uniformLocations.projectionMatrix, false, projectionMatrix);
         
+        floorTiles.forEach(tile => drawObject(gl, programInfo, buffers, tile, floorTexture));
         walls.forEach(wall => drawObject(gl, programInfo, buffers, wall, wallTexture));
         coins.forEach(coin => drawObject(gl, programInfo, buffers, coin, coinTexture));
         if (coinsToCollect === 0) drawObject(gl, programInfo, buffers, exit, doorTexture);
@@ -141,15 +150,20 @@ document.addEventListener('DOMContentLoaded', () => {
         gameCanvas.height = height * tileSize;
         const levelLayout = generateLevel(width, height, name);
         
-        walls = []; coins = []; coinsToCollect = 0;
+        walls = []; coins = []; floorTiles = []; coinsToCollect = 0;
         levelSpan.textContent = levelIndex + 1;
+
         for (let y = 0; y < levelLayout.length; y++) {
             for (let x = 0; x < levelLayout[y].length; x++) {
                 const tile = levelLayout[y][x];
-                if (tile === '#') { walls.push({ x, y }); }
-                else if (tile === 'P') { player.x = x; player.y = y; }
-                else if (tile === 'C') { coins.push({ x, y }); coinsToCollect++; }
-                else if (tile === 'E') { exit.x = x; exit.y = y; }
+                if (tile === '#') {
+                    walls.push({ x, y });
+                } else {
+                    floorTiles.push({ x, y });
+                    if (tile === 'P') { player.x = x; player.y = y; }
+                    else if (tile === 'C') { coins.push({ x, y }); coinsToCollect++; }
+                    else if (tile === 'E') { exit.x = x; exit.y = y; }
+                }
             }
         }
         updateCoinCounter();
@@ -200,7 +214,6 @@ document.addEventListener('DOMContentLoaded', () => {
         gameState = 'CHARACTER_SELECT';
         mainMenu.style.display = 'none';
         
-        // Update character visuals based on unlock status
         characterChoiceElements.forEach(choiceEl => {
             const spritePath = choiceEl.dataset.sprite;
             if (characters[spritePath] && !characters[spritePath].unlocked) {
@@ -212,7 +225,6 @@ document.addEventListener('DOMContentLoaded', () => {
         
         characterSelectMenu.style.display = 'block';
         
-        // Set default selections visually
         document.querySelector('.character-option[data-sprite="assets/player-sprite.png"]').classList.add('selected');
         document.querySelector('.difficulty-option[data-difficulty="medium"]').classList.add('selected');
     }
@@ -237,15 +249,13 @@ document.addEventListener('DOMContentLoaded', () => {
         gameWrapper.style.display = 'none';
         backgroundMusic.pause();
 
-        // --- UNLOCK LOGIC ---
-        // Check if the completed difficulty unlocks a character
         const difficulty = selectedDifficulty.name;
         for (const sprite in characters) {
             if (characters[sprite].unlocksOn === difficulty) {
                 characters[sprite].unlocked = true;
             }
         }
-        saveUnlocks(); 
+        saveUnlocks();
     }
 
     function startGame() {
@@ -267,7 +277,6 @@ document.addEventListener('DOMContentLoaded', () => {
     characterChoiceElements.forEach(choice => {
         choice.addEventListener('click', () => {
             const spritePath = choice.dataset.sprite;
-            // Only allow selection if the character is unlocked
             if (characters[spritePath] && characters[spritePath].unlocked) {
                 characterChoiceElements.forEach(el => el.classList.remove('selected'));
                 choice.classList.add('selected');
@@ -286,7 +295,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // --- Initial Call ---
-    loadUnlocks(); // Load any saved progress when the game first loads
+    loadUnlocks();
     showMainMenu();
     requestAnimationFrame(gameLoop);
 })();
