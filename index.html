@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puzzle Dungeon</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="main-menu">
+        <h2>Puzzle Dungeon</h2>
+        <button id="start-button">Start Game</button>
+    </div>
+
+    <div id="character-select-menu">
+        <h2>Choose Your Character</h2>
+        <div class="character-choices">
+            <div class="character-option" data-sprite="assets/player-sprite.png">
+                <img src="assets/player-sprite.png" alt="Blue Character">
+            </div>
+            <div class="character-option" data-sprite="assets/player-sprite-3.png">
+                <img src="assets/player-sprite-3.png" alt="Orange Character">
+            </div>
+            <div class="character-option" data-sprite="assets/player-sprite-2.png">
+                <img src="assets/player-sprite-2.png" alt="New Character">
+            </div>
+        </div>
+        <div class="difficulty-selector">
+            <h3>Difficulty</h3>
+            <button class="difficulty-option" data-difficulty="easy">Easy</button>
+            <button class="difficulty-option" data-difficulty="medium">Medium</button>
+            <button class="difficulty-option" data-difficulty="hard">Hard</button>
+        </div>
+        <button id="play-button">Play</button>
+    </div>
+
+    <div id="pause-menu">
+        <h2>Paused</h2>
+        <button id="resume-button">Resume</button>
+        <button id="pause-to-main-menu-button">Main Menu</button>
+    </div>
+
+    <div id="win-screen">
+        <h2>You Win!</h2>
+        <p>Congratulations, you've completed the Puzzle Dungeon!</p>
+        <button id="play-again-button">Play Again</button>
+    </div>
+
+    <main id="game-wrapper">
+        <h1>Puzzle Dungeon</h1>
+        <canvas id="gameCanvas"></canvas>
+        <div id="info">
+            <p>Coins Remaining: <span id="coins-remaining"></span></p>
+            <p>Level: <span id="level"></span></p>
+            <p>Use Arrow Keys to move. Collect all the coins to unlock the exit!</p>
+            <div class="volume-control">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="volume-icon"><path d="M11 5L6 9H2v6h4l5 4V5z"></path><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path></svg>
+                <input type="range" id="volume-slider" min="0" max="1" value="1" step="0.01">
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
