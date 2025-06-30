@@ -1,0 +1,313 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+
+body {
+    background: linear-gradient(to bottom, #483D8B, #1a2330);
+    background-attachment: fixed;
+    font-family: 'Roboto', sans-serif;
+    color: #EAEAEA;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#game-wrapper {
+    position: relative; /* Needed for positioning child elements */
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 1em;
+    box-sizing: border-box;
+    gap: 1em;
+    transition: filter 0.3s ease-in-out;
+}
+
+/* --- Menu & Screen Styles (Pop-ups) --- */
+#main-menu, #win-screen, #character-select-menu, #pause-menu, #help-menu, #settings-menu {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgba(26, 35, 48, 0.8);
+    padding: clamp(1.5em, 5vw, 3em);
+    border-radius: 10px;
+    backdrop-filter: blur(5px);
+    text-align: center;
+    width: 85%;
+    max-width: 500px;
+    z-index: 10;
+    display: none;
+}
+
+#main-menu, #character-select-menu, #pause-menu, #help-menu, #settings-menu {
+    border: 2px solid #8A2BE2;
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
+}
+
+#win-screen {
+    border: 2px solid #FFA726;
+    box-shadow: 0 0 25px rgba(255, 167, 38, 0.7);
+}
+
+#main-menu h2, #win-screen h2, #character-select-menu h2, #pause-menu h2, #help-menu h2, #settings-menu h2 {
+    font-family: 'Press Start 2P', cursive;
+    color: #FFA726;
+    text-shadow: 0 0 8px #FFA726;
+    margin: 0 0 1.5em 0;
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
+}
+
+/* --- Help Menu & Button Specifics --- */
+#help-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+#help-button:hover {
+    transform: scale(1.1);
+}
+
+.help-content {
+    text-align: left;
+    margin-bottom: 2em;
+    line-height: 1.6;
+    font-family: 'Roboto', sans-serif;
+}
+
+.help-content p {
+    margin-bottom: 1em;
+}
+
+/* --- Shared Button Styles --- */
+#start-button, #play-again-button, #resume-button, #pause-to-main-menu-button, .difficulty-option, #play-button, #close-help-button, #close-settings-button {
+    font-family: 'Press Start 2P', cursive;
+    font-size: clamp(0.8rem, 3.5vw, 1.1rem);
+    color: #1a2330;
+    background-color: #FFA726;
+    border: none;
+    padding: 15px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    margin: 0.5em;
+}
+
+#start-button:hover, #play-again-button:hover, #resume-button:hover, #pause-to-main-menu-button:hover, .difficulty-option:hover, #play-button:hover, #close-help-button:hover, #close-settings-button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #FFA726;
+}
+
+/* --- Character & Difficulty Selection Styles --- */
+.character-choices {
+    display: flex;
+    justify-content: center;
+    gap: 0.5em;
+    margin-bottom: 2em;
+}
+
+.character-option {
+    border: 3px solid #483D8B;
+    border-radius: 8px;
+    padding: 5px;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    background-color: rgba(0,0,0,0.2);
+}
+
+.character-option:hover {
+    transform: scale(1.1);
+    border-color: #FFA726;
+}
+
+.character-option.selected {
+    border-color: #8A2BE2;
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
+}
+
+.character-option.locked {
+    opacity: 0.35;
+    cursor: not-allowed;
+    border-color: #483D8B;
+}
+.character-option.locked:hover {
+    transform: none;
+    border-color: #483D8B;
+}
+
+
+.character-option img {
+    width: 65px;
+    height: 65px;
+    image-rendering: pixelated;
+}
+
+.difficulty-selector {
+    margin-bottom: 1em;
+}
+
+.difficulty-selector h3 {
+    font-family: 'Press Start 2P', cursive;
+    color: #EAEAEA;
+    font-size: clamp(1rem, 4vw, 1.3rem);
+    margin-bottom: 1em;
+    opacity: 0.8;
+}
+
+.difficulty-option.selected {
+    background-color: #8A2BE2;
+    color: #fff;
+    box-shadow: 0 0 15px #8A2BE2;
+}
+
+
+/* --- Game Content Styling --- */
+h1 {
+    font-family: 'Press Start 2P', cursive;
+    color: #FFA726;
+    text-shadow: 0 0 8px #FFA726, 0 0 2px #000;
+    text-align: center;
+    margin: 0;
+    flex-shrink: 0;
+    font-size: clamp(1rem, 3vmin, 2.2rem);
+}
+
+canvas {
+    background-color: #000;
+    border: 3px solid #8A2BE2;
+    box-shadow: 0 0 20px #8A2BE2;
+    border-radius: 5px;
+    display: block;
+    object-fit: contain;
+    aspect-ratio: 1 / 1;
+    width: auto;
+    height: auto;
+}
+
+#game-hud {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    background-color: rgba(26, 35, 48, 0.5);
+    padding: 10px;
+    border-radius: 8px;
+    font-size: clamp(0.8rem, 2.5vw, 1.2rem);
+}
+#game-hud p {
+    margin: 0;
+    font-family: 'Press Start 2P', cursive;
+}
+#game-hud span {
+    color: #FFA726;
+}
+
+#settings-button {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    z-index: 5;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+#settings-button:hover {
+    transform: scale(1.1) rotate(45deg);
+}
+
+.volume-control {
+    margin-top: 0.5em;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+}
+
+.volume-icon {
+    stroke: #EAEAEA;
+    opacity: 0.7;
+}
+
+#volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: clamp(150px, 30vw, 250px); 
+    height: 8px;
+    background: #1a2330;
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+}
+
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    background: #FFA726;
+    border-radius: 50%;
+    border: 2px solid #1a2330;
+    box-shadow: 0 0 5px rgba(255, 167, 38, 0.5);
+    margin-top: -5px;
+}
+
+/* --- Touch Controls --- */
+#touch-controls {
+    display: none; /* Hidden by default */
+    position: fixed;
+    bottom: 5vw;
+    left: 5vw;
+    z-index: 100;
+    opacity: 0.7;
+    width: 150px;
+    height: 150px;
+    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-rows: 1fr 1fr 1fr;
+    gap: 5px;
+}
+
+.control-button {
+    background-color: rgba(255, 167, 38, 0.8);
+    border: 2px solid #1a2330;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 24px;
+    font-weight: bold;
+    user-select: none; /* Prevent text selection */
+}
+
+.control-button:active {
+    background-color: rgba(255, 167, 38, 1);
+}
+
+#control-up { grid-area: 1 / 2 / 2 / 3; }
+#control-left { grid-area: 2 / 1 / 3 / 2; }
+#control-right { grid-area: 2 / 3 / 3 / 4; }
+#control-down { grid-area: 3 / 2 / 4 / 3; }
+
+
+/* Show controls only on touch-capable devices */
+@media (pointer: coarse) {
+    #touch-controls {
+        display: grid;
+    }
+}
