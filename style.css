@@ -18,10 +18,7 @@ body {
 }
 
 #game-wrapper {
-<<<<<<< HEAD
-=======
     position: relative; /* Needed for positioning child elements */
->>>>>>> 61ac9d3 (Initial commit)
     width: 100%;
     height: 100%;
     display: flex;
@@ -35,11 +32,7 @@ body {
 }
 
 /* --- Menu & Screen Styles (Pop-ups) --- */
-<<<<<<< HEAD
-#main-menu, #win-screen, #character-select-menu, #pause-menu {
-=======
 #main-menu, #win-screen, #character-select-menu, #pause-menu, #help-menu, #settings-menu {
->>>>>>> 61ac9d3 (Initial commit)
     position: absolute;
     top: 50%;
     left: 50%;
@@ -55,11 +48,7 @@ body {
     display: none;
 }
 
-<<<<<<< HEAD
-#main-menu, #character-select-menu, #pause-menu {
-=======
 #main-menu, #character-select-menu, #pause-menu, #help-menu, #settings-menu {
->>>>>>> 61ac9d3 (Initial commit)
     border: 2px solid #8A2BE2;
     box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
 }
@@ -69,11 +58,7 @@ body {
     box-shadow: 0 0 25px rgba(255, 167, 38, 0.7);
 }
 
-<<<<<<< HEAD
-#main-menu h2, #win-screen h2, #character-select-menu h2, #pause-menu h2 {
-=======
 #main-menu h2, #win-screen h2, #character-select-menu h2, #pause-menu h2, #help-menu h2, #settings-menu h2 {
->>>>>>> 61ac9d3 (Initial commit)
     font-family: 'Press Start 2P', cursive;
     color: #FFA726;
     text-shadow: 0 0 8px #FFA726;
@@ -81,10 +66,6 @@ body {
     font-size: clamp(1.5rem, 6vw, 2.5rem);
 }
 
-<<<<<<< HEAD
-/* --- Shared Button Styles --- */
-#start-button, #play-again-button, #resume-button, #pause-to-main-menu-button, .difficulty-option, #play-button {
-=======
 /* --- Help Menu & Button Specifics --- */
 #help-button {
     position: absolute;
@@ -113,7 +94,6 @@ body {
 
 /* --- Shared Button Styles --- */
 #start-button, #play-again-button, #resume-button, #pause-to-main-menu-button, .difficulty-option, #play-button, #close-help-button, #close-settings-button {
->>>>>>> 61ac9d3 (Initial commit)
     font-family: 'Press Start 2P', cursive;
     font-size: clamp(0.8rem, 3.5vw, 1.1rem);
     color: #1a2330;
@@ -126,11 +106,7 @@ body {
     margin: 0.5em;
 }
 
-<<<<<<< HEAD
-#start-button:hover, #play-again-button:hover, #resume-button:hover, #pause-to-main-menu-button:hover, .difficulty-option:hover, #play-button:hover {
-=======
 #start-button:hover, #play-again-button:hover, #resume-button:hover, #pause-to-main-menu-button:hover, .difficulty-option:hover, #play-button:hover, #close-help-button:hover, #close-settings-button:hover {
->>>>>>> 61ac9d3 (Initial commit)
     transform: scale(1.05);
     box-shadow: 0 0 15px #FFA726;
 }
@@ -139,22 +115,14 @@ body {
 .character-choices {
     display: flex;
     justify-content: center;
-<<<<<<< HEAD
-    gap: 0.5em; /* Further reduced gap for closer characters */
-=======
     gap: 0.5em;
->>>>>>> 61ac9d3 (Initial commit)
     margin-bottom: 2em;
 }
 
 .character-option {
     border: 3px solid #483D8B;
     border-radius: 8px;
-<<<<<<< HEAD
-    padding: 5px; /* Further reduced padding */
-=======
     padding: 5px;
->>>>>>> 61ac9d3 (Initial commit)
     cursor: pointer;
     transition: all 0.2s ease-in-out;
     background-color: rgba(0,0,0,0.2);
@@ -171,17 +139,6 @@ body {
     box-shadow: 0 0 15px rgba(138, 43, 226, 0.7);
 }
 
-<<<<<<< HEAD
-/* --- NEW, more reliable style for locked characters --- */
-.character-option.locked {
-    opacity: 0.35; /* Fade out the locked character */
-    cursor: not-allowed;
-    border-color: #483D8B; /* Ensure border doesn't change on hover */
-}
-.character-option.locked:hover {
-    transform: none; /* No hover effect on locked characters */
-    border-color: #483D8B; /* Keep border color the same */
-=======
 .character-option.locked {
     opacity: 0.35;
     cursor: not-allowed;
@@ -190,7 +147,6 @@ body {
 .character-option.locked:hover {
     transform: none;
     border-color: #483D8B;
->>>>>>> 61ac9d3 (Initial commit)
 }
 
 
@@ -238,22 +194,6 @@ canvas {
     display: block;
     object-fit: contain;
     aspect-ratio: 1 / 1;
-<<<<<<< HEAD
-    max-width: 95%; 
-    max-height: 65%;
-}
-
-#info {
-    font-size: clamp(0.7rem, 2vmin, 1.1rem);
-    line-height: 1.5;
-    opacity: 0.8;
-    text-align: center;
-    flex-shrink: 0;
-}
-
-#info p { margin: 0.2em 0; }
-#info span { color: #FFA726; font-weight: bold; }
-=======
     width: auto;
     height: auto;
 }
@@ -293,7 +233,6 @@ canvas {
 #settings-button:hover {
     transform: scale(1.1) rotate(45deg);
 }
->>>>>>> 61ac9d3 (Initial commit)
 
 .volume-control {
     margin-top: 0.5em;
@@ -311,11 +250,7 @@ canvas {
 #volume-slider {
     -webkit-appearance: none;
     appearance: none;
-<<<<<<< HEAD
-    width: clamp(100px, 20vw, 150px); 
-=======
     width: clamp(150px, 30vw, 250px); 
->>>>>>> 61ac9d3 (Initial commit)
     height: 8px;
     background: #1a2330;
     border-radius: 5px;
@@ -333,8 +268,6 @@ canvas {
     border: 2px solid #1a2330;
     box-shadow: 0 0 5px rgba(255, 167, 38, 0.5);
     margin-top: -5px;
-<<<<<<< HEAD
-=======
 }
 
 /* --- Touch Controls --- */
@@ -377,5 +310,4 @@ canvas {
     #touch-controls {
         display: grid;
     }
->>>>>>> 61ac9d3 (Initial commit)
 }
