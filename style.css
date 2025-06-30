@@ -192,11 +192,13 @@ canvas {
     box-shadow: 0 0 20px #8A2BE2;
     border-radius: 5px;
     display: block;
-    object-fit: contain;
-    aspect-ratio: 1 / 1;
-    width: auto;
-    height: auto;
+    
+    image-rendering: -moz-crisp-edges;
+    image-rendering: -webkit-crisp-edges;
+    image-rendering: pixelated;
+    image-rendering: crisp-edges;
 }
+
 
 #game-hud {
     position: absolute;

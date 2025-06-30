@@ -2,7 +2,7 @@ import { tileSize } from './config.js';
 import { mat4 } from './mat4.js';
 import { initShaderProgram, initBuffers } from './webgl_setup.js';
 import { loadTexture, drawObject } from './drawing.js';
-import { generateLevel } from './level_generator.js';
+import { levels } from './levels.js';
 
 // Wait until the HTML document is fully loaded before running the game script.
 document.addEventListener('DOMContentLoaded', () => {
@@ -52,7 +52,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function loadUnlocks() {
-        const unlockedChars = JSON.parse(localStorage.getItem('dungeonUnlocks'));
+        const unlockedChars = JSON.parse(localStorage.getItem('dunngeonUnlocks'));
         if (unlockedChars) {
             for (const sprite in unlockedChars) {
                 if (characters[sprite]) {
@@ -66,14 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Game Settings ---
     let selectedSpritePath = 'assets/player-sprite.png';
     let playerTexture;
-    let selectedDifficulty = { name: 'medium', width: 13, height: 13 };
-
-    const difficultySettings = {
-        easy: { name: 'easy', width: 9, height: 9 },
-        medium: { name: 'medium', width: 13, height: 13 },
-        hard: { name: 'hard', width: 19, height: 19 },
-    };
-
+    let selectedDifficulty = 'medium'; 
+    let activeLevelSet = [];
+    
     volumeSlider.addEventListener('input', (e) => { backgroundMusic.volume = e.target.value; });
     
     let gameState = 'MENU';
@@ -127,7 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Game State Variables ---
     let currentLevel = 0;
-    const MAX_LEVELS = 10;
     let player = { x: 1, y: 1 };
     let coins = [];
     let exit = { x: 0, y: 0 };
@@ -162,22 +156,40 @@ document.addEventListener('DOMContentLoaded', () => {
     function updateCoinCounter() { coinsRemainingSpan.textContent = coinsToCollect; }
 
     function loadLevel(levelIndex) {
-        const { width, height, name } = selectedDifficulty;
-        const levelLayout = generateLevel(width, height, name);
-        
         walls = []; coins = []; floorTiles = []; coinsToCollect = 0;
-        levelSpan.textContent = levelIndex + 1;
+        
+        if (levelIndex >= activeLevelSet.length) {
+            showWinScreen();
+            return;
+        }
 
-        for (let y = 0; y < levelLayout.length; y++) {
-            for (let x = 0; x < levelLayout[y].length; x++) {
+        const levelLayout = activeLevelSet[levelIndex].layout;
+        levelSpan.textContent = `${levelIndex + 1} / ${activeLevelSet.length}`;
+
+        const levelWidth = levelLayout[0].length;
+        const levelHeight = levelLayout.length;
+        gameCanvas.width = levelWidth * tileSize;
+        gameCanvas.height = levelHeight * tileSize;
+        
+        // The CSS will handle the scaling of the canvas element.
+        for (let y = 0; y < levelHeight; y++) {
+            for (let x = 0; x < levelWidth; x++) {
                 const tile = levelLayout[y][x];
+
                 if (tile === '#') {
                     walls.push({ x, y });
                 } else {
                     floorTiles.push({ x, y });
-                    if (tile === 'P') { player.x = x; player.y = y; }
-                    else if (tile === 'C') { coins.push({ x, y }); coinsToCollect++; }
-                    else if (tile === 'E') { exit.x = x; exit.y = y; }
+                    if (tile === 'P') {
+                        player.x = x;
+                        player.y = y;
+                    } else if (tile === 'C') {
+                        coins.push({ x, y });
+                        coinsToCollect++;
+                    } else if (tile === 'E') {
+                        exit.x = x;
+                        exit.y = y;
+                    }
                 }
             }
         }
@@ -209,11 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (coinsToCollect === 0 && player.x === exit.x && player.y === exit.y) {
             currentLevel++;
-            if (currentLevel < MAX_LEVELS) {
-                loadLevel(currentLevel);
-            } else {
-                showWinScreen();
-            }
+            loadLevel(currentLevel);
         }
     }
     
@@ -304,44 +312,22 @@ document.addEventListener('DOMContentLoaded', () => {
         gameWrapper.style.display = 'none';
         backgroundMusic.pause();
 
-        const difficulty = selectedDifficulty.name;
-        for (const sprite in characters) {
-            if (characters[sprite].unlocksOn === difficulty) {
-                characters[sprite].unlocked = true;
-            }
+        // Unlock character if player beat the game on a certain difficulty
+        if (characters[characters[selectedDifficulty].unlocksOn]) {
+            characters[characters[selectedDifficulty].unlocksOn].unlocked = true;
         }
         saveUnlocks();
     }
 
     function startGame() {
         playerTexture = loadTexture(gl, selectedSpritePath);
+        activeLevelSet = levels[selectedDifficulty];
         gameState = 'PLAYING';
         characterSelectMenu.style.display = 'none';
         gameWrapper.style.display = 'flex';
         backgroundMusic.play().catch(e => console.error("Music playback failed:", e));
         currentLevel = 0;
         loadLevel(currentLevel);
-        resizeCanvas();
-    }
-
-    function resizeCanvas() {
-        const { width, height } = selectedDifficulty;
-        const aspectRatio = width / height;
-    
-        let newWidth = window.innerWidth * 0.95;
-        let newHeight = window.innerHeight * 0.65;
-    
-        if (newWidth / newHeight > aspectRatio) {
-            newWidth = newHeight * aspectRatio;
-        } else {
-            newHeight = newWidth / aspectRatio;
-        }
-    
-        gameCanvas.style.width = `${newWidth}px`;
-        gameCanvas.style.height = `${newHeight}px`;
-    
-        gameCanvas.width = width * tileSize;
-        gameCanvas.height = height * tileSize;
     }
     
     function setupTouchControls() {
@@ -370,9 +356,7 @@ document.addEventListener('DOMContentLoaded', () => {
     playAgainButton.addEventListener('click', showMainMenu);
     resumeButton.addEventListener('click', resumeGame);
     pauseToMainMenuButton.addEventListener('click', showMainMenu);
-    window.addEventListener('resize', resizeCanvas);
     
-    // Help menu listeners
     helpButton.addEventListener('click', () => {
         helpMenu.style.display = 'block';
     });
@@ -380,7 +364,6 @@ document.addEventListener('DOMContentLoaded', () => {
         helpMenu.style.display = 'none';
     });
 
-    // Settings menu listeners
     settingsButton.addEventListener('click', showSettingsMenu);
     closeSettingsButton.addEventListener('click', resumeGame);
 
@@ -400,8 +383,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (e.target.classList.contains('difficulty-option')) {
             document.querySelectorAll('.difficulty-option').forEach(el => el.classList.remove('selected'));
             e.target.classList.add('selected');
-            const difficulty = e.target.dataset.difficulty;
-            selectedDifficulty = difficultySettings[difficulty];
+            selectedDifficulty = e.target.dataset.difficulty;
         }
     });
 
@@ -409,5 +391,6 @@ document.addEventListener('DOMContentLoaded', () => {
     loadUnlocks();
     showMainMenu();
     setupTouchControls();
+    // The canvas is sized when a level is loaded, so no initial resize is needed.
     requestAnimationFrame(gameLoop);
 })();
