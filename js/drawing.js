@@ -48,10 +48,11 @@ export function createAssetTexture(gl, color) {
     return texture;
 }
 
-// Reverted to the simpler version before animation
-export function drawObject(gl, programInfo, buffers, obj, texture) {
+// MODIFIED: Added an optional yOffset parameter to adjust vertical positioning.
+export function drawObject(gl, programInfo, buffers, obj, texture, yOffset = 0) {
     const modelViewMatrix = mat4.create();
-    mat4.translate(modelViewMatrix, modelViewMatrix, [obj.x * tileSize + tileSize / 2, obj.y * tileSize + tileSize / 2, 0]);
+    // MODIFIED: The yOffset is added to the Y translation.
+    mat4.translate(modelViewMatrix, modelViewMatrix, [obj.x * tileSize + tileSize / 2, obj.y * tileSize + tileSize / 2 + yOffset, 0]);
     mat4.scale(modelViewMatrix, modelViewMatrix, [tileSize / 2, tileSize / 2, 1]);
 
     gl.bindBuffer(gl.ARRAY_BUFFER, buffers.position);

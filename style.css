@@ -32,7 +32,7 @@ body {
 }
 
 /* --- Menu & Screen Styles (Pop-ups) --- */
-#main-menu, #win-screen, #character-select-menu, #pause-menu, #help-menu, #settings-menu {
+#main-menu, #win-screen, #character-select-menu, #pause-menu, #help-menu, #settings-menu, #game-over-menu {
     position: absolute;
     top: 50%;
     left: 50%;
@@ -48,7 +48,7 @@ body {
     display: none;
 }
 
-#main-menu, #character-select-menu, #pause-menu, #help-menu, #settings-menu {
+#main-menu, #character-select-menu, #pause-menu, #help-menu, #settings-menu, #game-over-menu {
     border: 2px solid #8A2BE2;
     box-shadow: 0 0 25px rgba(138, 43, 226, 0.7);
 }
@@ -58,7 +58,7 @@ body {
     box-shadow: 0 0 25px rgba(255, 167, 38, 0.7);
 }
 
-#main-menu h2, #win-screen h2, #character-select-menu h2, #pause-menu h2, #help-menu h2, #settings-menu h2 {
+#main-menu h2, #win-screen h2, #character-select-menu h2, #pause-menu h2, #help-menu h2, #settings-menu h2, #game-over-menu h2 {
     font-family: 'Press Start 2P', cursive;
     color: #FFA726;
     text-shadow: 0 0 8px #FFA726;
@@ -93,7 +93,7 @@ body {
 }
 
 /* --- Shared Button Styles --- */
-#start-button, #play-again-button, #resume-button, #pause-to-main-menu-button, .difficulty-option, #play-button, #close-help-button, #close-settings-button {
+#start-button, #play-again-button, #resume-button, #pause-to-main-menu-button, .difficulty-option, #play-button, #close-help-button, #close-settings-button, #restart-button, #game-over-to-main-menu-button {
     font-family: 'Press Start 2P', cursive;
     font-size: clamp(0.8rem, 3.5vw, 1.1rem);
     color: #1a2330;
@@ -106,7 +106,7 @@ body {
     margin: 0.5em;
 }
 
-#start-button:hover, #play-again-button:hover, #resume-button:hover, #pause-to-main-menu-button:hover, .difficulty-option:hover, #play-button:hover, #close-help-button:hover, #close-settings-button:hover {
+#start-button:hover, #play-again-button:hover, #resume-button:hover, #pause-to-main-menu-button:hover, .difficulty-option:hover, #play-button:hover, #close-help-button:hover, #close-settings-button:hover, #restart-button:hover, #game-over-to-main-menu-button:hover {
     transform: scale(1.05);
     box-shadow: 0 0 15px #FFA726;
 }
@@ -222,6 +222,20 @@ canvas {
     color: #FFA726;
 }
 
+#health-display {
+    display: flex;
+    gap: 5px;
+    margin-top: 5px;
+    height: 24px;
+}
+
+#health-display img {
+    width: 24px;
+    height: 24px;
+    image-rendering: pixelated;
+}
+
+
 #settings-button {
     position: absolute;
     top: 20px;
@@ -287,6 +301,7 @@ canvas {
     gap: 5px;
 }
 
+/* MODIFIED: Added user-select properties to prevent text selection on hold */
 .control-button {
     background-color: rgba(255, 167, 38, 0.8);
     border: 2px solid #1a2330;
@@ -294,7 +309,9 @@ canvas {
     color: #fff;
     font-size: 24px;
     font-weight: bold;
-    user-select: none; /* Prevent text selection */
+    user-select: none; /* Standard property */
+    -webkit-user-select: none; /* For Safari */
+    -webkit-touch-callout: none; /* Disables the callout menu on hold */
 }
 
 .control-button:active {
